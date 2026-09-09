@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrewMind - Cafeteria Conectada</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1a120b;
+            color: #f3f4f6;
+            font-family: ui-sans-serif, system-ui, sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    
+    <div id="login-screen" class="flex-grow flex items-center justify-center p-6">
+        <div class="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <!-- Texto institucional -->
+            <div>
+                <span class="inline-block text-xs font-semibold px-3 py-1 rounded-full bg-[#2d2015] text-amber-500 border border-amber-900/50 mb-4">
+                    ✨ Extração inteligente em 40 segundos
+                </span>
+                <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
+                    Sua cafeteira, <span class="text-amber-600">conectada</span> ao paladar de todo mundo.
+                </h1>
+                <p class="text-gray-400 text-sm md:text-base mb-8">
+                    O BrewMind controla o cardápio, o preparo e o estoque da máquina. Clientes pedem pelo celular, o dono ajusta tudo em tempo real.
+                </p>
+                <div class="flex flex-wrap gap-4 text-xs text-gray-400">
+                    <div class="px-3 py-2 rounded-xl bg-[#23170e] border border-[#332215]"> Cardápio vivo</div>
+                    <div class="px-3 py-2 rounded-xl bg-[#23170e] border border-[#332215]"> Preparo guiado</div>
+                    <div class="px-3 py-2 rounded-xl bg-[#23170e] border border-[#332215]"> Acesso por perfil</div>
+                </div>
+            </div>
+
+            
+            <div class="bg-[#23170e] border border-[#332215] p-8 rounded-2xl shadow-2xl">
+                <div class="flex bg-[#1a120b] p-1 rounded-xl mb-6 border border-[#332215]">
+                    <button class="flex-1 py-2 text-sm font-medium rounded-lg bg-[#2d2015] text-white shadow">Entrar</button>
+                    <button class="flex-1 py-2 text-sm font-medium rounded-lg text-gray-400 hover:text-white">Criar Conta</button>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">E-mail</label>
+                        <input type="email" id="login-email" value="Rodolfo_xemetaling@gmail.com.br" class="w-full bg-[#1a120b] border border-[#332215] rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-amber-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-1">Senha</label>
+                        <input type="password" value="12345678" class="w-full bg-[#1a120b] border border-[#332215] rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-amber-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-300 mb-2">Perfil de acesso</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center space-x-2 border border-amber-600/50 bg-[#2d2015]/40 p-3 rounded-xl cursor-pointer">
+                                <input type="radio" name="profile" value="client" checked class="text-amber-600 focus:ring-0">
+                                <span class="text-sm">Cliente</span>
+                            </label>
+                            <label class="flex items-center space-x-2 border border-[#332215] bg-[#1a120b] p-3 rounded-xl cursor-pointer">
+                                <input type="radio" name="profile" value="owner" class="text-amber-600 focus:ring-0">
+                                <span class="text-sm">Dono da Máquina</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button onclick="realizarLogin()" class="w-full bg-amber-600 hover:bg-amber-500 text-gray-950 font-semibold py-3 rounded-xl transition duration-200 mt-2">
+                        Entrar
+                    </button>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-[#332215]">
+                    <p class="text-xs text-gray-400 mb-3">ACESSO RÁPIDO PARA DEMONSTRAÇÃO</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="acessarRapido('client')" class="bg-[#1a120b] hover:bg-[#2d2015] border border-[#332215] text-xs py-2 px-3 rounded-xl transition">Login como Cliente</button>
+                        <button onclick="acessarRapido('owner')" class="bg-[#1a120b] hover:bg-[#2d2015] border border-[#332215] text-xs py-2 px-3 rounded-xl transition">Login como Dono</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="client-screen" class="hidden flex-grow p-6 md:p-12 max-w-7xl mx-auto w-full">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <p class="text-xs text-gray-400">Bom te ver por aqui,</p>
+                <h2 class="text-2xl font-bold flex items-center gap-2">Rodolfo_xemetaling ☕</h2>
+            </div>
+            <div class="flex items-center gap-4">
+                <span class="text-xs bg-[#23170e] border border-[#332215] px-3 py-2 rounded-xl text-gray-300">🛒 <span id="cart-count">0</span> pedido(s)</span>
+                <button onclick="voltarLogin()" class="bg-[#23170e] hover:bg-[#2d2015] border border-[#332215] text-xs px-4 py-2 rounded-xl transition">Sair</button>
+            </div>
+        </header>
+
+        <div class="mb-8">
+            <h3 class="text-xl font-bold mb-1">Cardápio da máquina</h3>
+            <p class="text-xs text-gray-400">Atualizado em tempo real pelo dono da cafeteria.</p>
+        </div>
+
+        <div id="client-menu-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+           
+        </div>
+    </div>
+
+    
+    <div id="owner-screen" class="hidden flex-grow p-6 md:p-12 max-w-7xl mx-auto w-full">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <p class="text-xs text-gray-400">Painel do dono da máquina</p>
+                <h2 class="text-2xl font-bold">Olá, Rodolfo_xemetaling</h2>
+            </div>
+            <button onclick="voltarLogin()" class="bg-[#23170e] hover:bg-[#2d2015] border border-[#332215] text-xs px-4 py-2 rounded-xl transition">Sair</button>
+        </header>
+
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-[#23170e] border border-[#332215] p-6 rounded-2xl">
+                <p class="text-xs text-gray-400 mb-2">📈 Pedidos na sessão</p>
+                <p class="text-3xl font-bold" id="owner-order-count">0</p>
+                <p class="text-xs text-gray-500 mt-1">Preparos solicitados pelos clientes</p>
+            </div>
+            <div class="bg-[#23170e] border border-[#332215] p-6 rounded-2xl">
+                <p class="text-xs text-gray-400 mb-2">☕ Cafés cadastrados</p>
+                <p class="text-3xl font-bold" id="owner-product-count">3</p>
+                <p class="text-xs text-gray-500 mt-1">3 disponíveis</p>
+            </div>
+            <div class="bg-[#23170e] border border-[#332215] p-6 rounded-2xl">
+                <p class="text-xs text-gray-400 mb-2">💧 Reservatório de água</p>
+                <p class="text-3xl font-bold text-amber-500">85%</p>
+                <div class="w-full bg-[#1a120b] h-2 rounded-full mt-3 overflow-hidden">
+                    <div class="bg-amber-600 h-full w-[85%]"></div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <div class="bg-[#23170e] border border-[#332215] p-6 rounded-2xl md:col-span-1">
+                <h3 class="font-bold text-base mb-4">Cadastrar nova bebida</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Nome da bebida</label>
+                        <input type="text" id="new-name" placeholder="Ex: Mocha Avelã" class="w-full bg-[#1a120b] border border-[#332215] rounded-xl px-3 py-2 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs text-gray-400 mb-1">Descrição</label>
+                        <textarea id="new-desc" placeholder="Ex: Espresso com cacau..." class="w-full bg-[#1a120b] border border-[#332215] rounded-xl px-3 py-2 text-sm h-20"></textarea>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Preço (R$)</label>
+                            <input type="text" id="new-price" placeholder="12,90" class="w-full bg-[#1a120b] border border-[#332215] rounded-xl px-3 py-2 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Intensidade</label>
+                            <select id="new-int" class="w-full bg-[#1a120b] border border-[#332215] rounded-xl px-3 py-2 text-sm">
+                                <option>5/5</option>
+                                <option>3/5</option>
+                                <option>2/5</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button onclick="adicionarBebida()" class="w-full bg-amber-600 hover:bg-amber-500 text-gray-950 font-semibold py-2.5 rounded-xl text-sm transition">
+                        Adicionar ao Cardápio
+                    </button>
+                </div>
+            </div>
+
+            
+            <div class="bg-[#23170e] border border-[#332215] p-6 rounded-2xl md:col-span-2 overflow-x-auto">
+                <h3 class="font-bold text-base mb-4">Cardápio cadastrado</h3>
+                <table class="w-full text-left text-sm">
+                    <thead>
+                        <tr class="border-b border-[#332215] text-gray-400 text-xs">
+                            <th class="pb-3">Bebida</th>
+                            <th class="pb-3">Preço</th>
+                            <th class="pb-3">Int.</th>
+                            <th class="pb-3">Status</th>
+                            <th class="pb-3 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="owner-table-body">
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="preparation-modal" class="hidden fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-50">
+        <div class="bg-[#23170e] border border-[#332215] max-w-lg w-full p-6 rounded-2xl relative shadow-2xl">
+            <button onclick="fecharModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-[#1a120b] p-1.5 rounded-full border border-[#332215]">✕</button>
+            
+            <h3 class="text-xl font-bold mb-1" id="modal-title">Preparando Bebida</h3>
+            <p class="text-xs text-gray-400 mb-6">A cafeteira assumiu o controle. Isso leva alguns segundos.</p>
+
+            
+            <div class="w-full bg-[#1a120b] h-2 rounded-full mb-6 overflow-hidden">
+                <div id="progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-1000"></div>
+            </div>
+
+            <p class="text-sm font-semibold mb-3 flex items-center gap-2" id="modal-status-text">Iniciando máquina... ☕</p>
+
+            <ul class="space-y-2 text-xs text-gray-300 mb-6 border-t border-b border-[#332215] py-4">
+                <li>• Moendo grãos frescos...</li>
+                <li>• Esquentando a água a 92°C...</li>
+                <li>• Extraindo o espresso...</li>
+                <li>• Pronto para retirada! ☕</li>
+            </ul>
+
+            <button id="btn-retirar" disabled onclick="fecharModal()" class="w-full bg-amber-600/50 cursor-not-allowed text-gray-950 font-semibold py-3 rounded-xl transition text-sm">
+                Aguarde o preparo...
+            </button>
+        </div>
+    </div>
+
+    
+    <script>
+        
+        let cardapio = [
+            { id: 1, nome: "Expresso Tradicional", desc: "Curto, encorpado e com crema aveludada. O clássico de sempre.", preco: "6,50", int: "5/5", status: "Disponível", imagem: "Imagens/Expresso.jpg" },
+            { id: 2, nome: "Cappuccino Cremoso", desc: "Espresso, leite vaporizado e uma nuvem generosa de espuma.", preco: "9,90", int: "3/5", status: "Disponível", imagem: "Imagens/Cappuccino.jpg" },
+            { id: 3, nome: "Latte Macchiato", desc: "Camadas suaves de leite quente marcadas por um shot de espresso.", preco: "11,50", int: "2/5", status: "Disponível", imagem: "Imagens/latte.jpg" }
+        ];
+
+        let totalPedidos = 0;
+
+        function realizarLogin() {
+            const perfil = document.querySelector('input[name="profile"]:checked').value;
+            irParaPainel(perfil);
+        }
+
+        function acessarRapido(perfil) {
+            irParaPainel(perfil);
+        }
+
+        function irParaPainel(perfil) {
+            document.getElementById('login-screen').classList.add('hidden');
+            if(perfil === 'client') {
+                document.getElementById('client-screen').classList.remove('hidden');
+                document.getElementById('owner-screen').classList.add('hidden');
+                renderizarCardapioCliente();
+            } else {
+                document.getElementById('owner-screen').classList.remove('hidden');
+                document.getElementById('client-screen').classList.add('hidden');
+                renderizarTabelaDono();
+            }
+        }
+
+        function voltarLogin() {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('client-screen').classList.add('hidden');
+            document.getElementById('owner-screen').classList.add('hidden');
+        }
+
+        function renderizarCardapioCliente() {
+            const grid = document.getElementById('client-menu-grid');
+            grid.innerHTML = '';
+            cardapio.forEach(item => {
+                grid.innerHTML += `
+                    <div class="bg-[#23170e] border border-[#332215] rounded-2xl p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="h-36 bg-[#1a120b] rounded-xl mb-4 overflow-hidden border border-[#332215]">
+                                <img src="${item.imagem || ''}" alt="${item.nome}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-base">${item.nome}</h4>
+                                <span class="text-amber-500 font-bold text-sm">R$ ${item.preco}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-4">${item.desc}</p>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 mb-3">Intensidade: ${item.int}</div>
+                            <button onclick="iniciarPreparo('${item.nome}')" class="w-full bg-amber-600 hover:bg-amber-500 text-gray-950 font-semibold py-2.5 rounded-xl text-xs transition">
+                                Pedir Agora
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function renderizarTabelaDono() {
+            const tbody = document.getElementById('owner-table-body');
+            tbody.innerHTML = '';
+            cardapio.forEach((item, index) => {
+                tbody.innerHTML += `
+                    <tr class="border-b border-[#332215]/50">
+                        <td class="py-3 font-medium">${item.nome}</td>
+                        <td class="py-3 text-amber-500">R$ ${item.preco}</td>
+                        <td class="py-3">${item.int}</td>
+                        <td class="py-3"><span class="px-2.5 py-1 rounded-full text-xs bg-amber-950/40 text-amber-400 border border-amber-900/40">${item.status}</span></td>
+                        <td class="py-3 text-right space-x-2">
+                            <button onclick="removerItem(${index})" class="text-red-400 hover:text-red-300 bg-red-950/30 p-1.5 rounded-lg border border-red-900/40">🗑️</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById('owner-order-count').innerText = totalPedidos;
+            document.getElementById('owner-product-count').innerText = cardapio.length;
+        }
+
+        function adicionarBebida() {
+            const nome = document.getElementById('new-name').value;
+            const desc = document.getElementById('new-desc').value;
+            const preco = document.getElementById('new-price').value;
+            const int = document.getElementById('new-int').value;
+
+            if(!nome || !preco) {
+                alert('Preencha pelo menos o nome e o preço!');
+                return;
+            }
+
+            cardapio.push({ id: cardapio.length + 1, nome, desc, preco, int, status: "Disponível" });
+            
+            // Limpa campos
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-desc').value = '';
+            document.getElementById('new-price').value = '';
+
+            renderizarTabelaDono();
+            alert('Bebida cadastrada e sincronizada com o cardápio ao vivo!');
+        }
+
+        function removerItem(index) {
+            cardapio.splice(index, 1);
+            renderizarTabelaDono();
+        }
+
+        function iniciarPreparo(nomeBebida) {
+            totalPedidos++;
+            document.getElementById('cart-count').innerText = totalPedidos;
+            
+            const modal = document.getElementById('preparation-modal');
+            const title = document.getElementById('modal-title');
+            const progressBar = document.getElementById('progress-bar');
+            const statusText = document.getElementById('modal-status-text');
+            const btnRetirar = document.getElementById('btn-retirar');
+
+            title.innerText = `Preparando ${nomeBebida}`;
+            modal.classList.remove('hidden');
+            
+            // Simulação de progresso da máquina em tempo real
+            progressBar.style.width = '0%';
+            btnRetirar.disabled = true;
+            btnRetirar.className = "w-full bg-amber-600/50 cursor-not-allowed text-gray-950 font-semibold py-3 rounded-xl transition text-sm";
+            btnRetirar.innerText = "Aguarde o preparo...";
+
+            setTimeout(() => { progressBar.style.width = '33%'; statusText.innerText = "Esquentando a água a 92°C... 💧"; }, 1000);
+            setTimeout(() => { progressBar.style.width = '66%'; statusText.innerText = "Extraindo o espresso... ⏳"; }, 2500);
+            setTimeout(() => { 
+                progressBar.style.width = '100%'; 
+                statusText.innerText = "Pronto! "; 
+                btnRetirar.disabled = false;
+                btnRetirar.className = "w-full bg-amber-600 hover:bg-amber-500 text-gray-950 font-semibold py-3 rounded-xl transition text-sm cursor-pointer";
+                btnRetirar.innerText = "Retirar café";
+            }, 4000);
+        }
+
+        function fecharModal() {
+            document.getElementById('preparation-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
