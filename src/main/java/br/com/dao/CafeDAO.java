@@ -1,6 +1,7 @@
 package br.com.dao;
 
 import br.com.factory.ConnectionFactory;
+import br.com.factory.DatabaseUtils;
 import br.com.model.Cafe;
 
 import java.sql.Connection;
@@ -11,6 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CafeDAO {
+
+    public CafeDAO() {
+        // Garante que o banco e as tabelas são criados na primeira chamada
+        DatabaseUtils.inicializarBanco();
+    }
 
     // 1. INSERIR NOVO CAFÉ
     public void salvar(Cafe cafe) {

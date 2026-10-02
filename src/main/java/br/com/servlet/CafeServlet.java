@@ -10,42 +10,41 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.List;
 
 @WebServlet("/cafes")
 public class CafeServlet extends HttpServlet {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private final CafeDAO cafeDAO = new CafeDAO();
+    private static final long serialVersionUID = 1L;
+    private final CafeDAO cafeDAO = new CafeDAO();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
+        response.setContentType("application/json;charset=UTF-8");
         List<Cafe> lista = cafeDAO.listarTodos();
-        request.setAttribute("listaCafes", lista);
-        request.getRequestDispatcher("/listar-cafes.jsp").forward(request, response);
-    }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
-            throws ServletException, IOException {
+        // Converte a lista de cafés para um array JSON
+        StringBuilder json = new StringBuilder("[");
+        for (int i = 0; i < lista.size(); i++) {
+            Cafe c = lista.get(i);
+            json.append("{")
+                    .append("\"id\":").append(c.getId()).append(",")
+                    .append("\"nome\":\"").append(c.getNome()).append("\",")
+                    .append("\"preco\":").append(c.getPreco()).append(",")
+                    .append("\"agua\":").append(c.getAguaNecessaria()).append(",")
+                    .append("\"graos\":").append(c.getGraosNecessarios())
+                    .append("}");
+            if (i < lista.size() - 1) {
+                json.append(",");
+            }
+        }
+        json.append("]");
 
-        String nome = request.getParameter("nome");
-        double preco = Double.parseDouble(request.getParameter("preco"));
-        int agua = Integer.parseInt(request.getParameter("agua"));
-        int graos = Integer.parseInt(request.getParameter("graos"));
-
-        Cafe cafe = new Cafe();
-        cafe.setNome(nome);
-        cafe.setPreco(preco);
-        cafe.setAguaNecessaria(agua);
-        cafe.setGraosNecessarios(graos);
-
-        cafeDAO.salvar(cafe);
-        response.sendRedirect(request.getContextPath() + "/cafes");
+        PrintWriter out = response.getWriter();
+        out.print(json.toString());
+        out.flush();
     }
 }

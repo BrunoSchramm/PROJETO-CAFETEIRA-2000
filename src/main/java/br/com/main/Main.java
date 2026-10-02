@@ -19,7 +19,10 @@ import br.com.model.StatusMaquina;
 public class Main {
 
     public static void main(String[] args) {
-        
+
+        // 1. Cria o banco H2 e as tabelas automaticamente se não existirem
+        DatabaseUtils.inicializarBanco();
+
         Scanner scanner = new Scanner(System.in);
 
         // Pergunta interativa no Console
@@ -78,11 +81,11 @@ public class Main {
         System.out.println("==========================================");
         List<Cafe> listaCafes = cafeDAO.listarTodos();
         for (Cafe c : listaCafes) {
-            System.out.println("ID: " + c.getId() + 
-                               " | Nome: " + c.getNome() + 
-                               " | Preço: R$ " + c.getPreco() + 
-                               " | Água: " + c.getAguaNecessaria() + "ml" + 
-                               " | Grãos: " + c.getGraosNecessarios() + "g");
+            System.out.println("ID: " + c.getId() +
+                    " | Nome: " + c.getNome() +
+                    " | Preço: R$ " + c.getPreco() +
+                    " | Água: " + c.getAguaNecessaria() + "ml" +
+                    " | Grãos: " + c.getGraosNecessarios() + "g");
         }
 
         scanner.close();

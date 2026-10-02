@@ -6,18 +6,18 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
 
-    // Configurações do seu banco local
-	private static final String URL = "jdbc:mysql://localhost:3306/cafeteira_db?useTimezone=true&serverTimezone=UTC";
-    private static final String USER = "cafeteira2000";     // Substitua pelo seu usuário do MySQL
-    private static final String PASSWORD = "7889"; // Substitua pela sua senha do MySQL
+    // Cria/utiliza um arquivo de banco dentro de uma pasta "banco" na raiz do projeto
+    private static final String URL = "jdbc:h2:./banco/cafeteira_db;MODE=MySQL;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE";
+    private static final String USER = "sa";
+    private static final String PASSWORD = "";
 
     public static Connection getConnection() throws SQLException {
         try {
-            // Carrega o driver JDBC do MySQL
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            // Carrega o driver JDBC do H2
+            Class.forName("org.h2.Driver");
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (ClassNotFoundException e) {
-            throw new SQLException("Driver do MySQL não encontrado! Verifique se adicionou o arquivo .jar nas bibliotecas do projeto.", e);
+            throw new SQLException("Driver do H2 não encontrado! Verifique o pom.xml.", e);
         }
     }
 }
