@@ -69,5 +69,5 @@ function fazerPedido(idCafe) {
             carregarCardapioCliente();
         }
     })
-    .catch(erro => console.error("Erro ao realizar pedido:", erro));
+    .catch(erro => console.error("Deu pra realizar o pedido não viu doido. É por causa disso aq ó:", erro));
 }
