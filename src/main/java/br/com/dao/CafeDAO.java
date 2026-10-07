@@ -14,11 +14,88 @@ import java.util.List;
 public class CafeDAO {
 
     public CafeDAO() {
-        // Garante que o banco e as tabelas são criados na primeira chamada
         DatabaseUtils.inicializarBanco();
     }
 
-    // 1. INSERIR NOVO CAFÉ
+    private void popularDadosIniciais() {
+        Cafe expresso = new Cafe();
+        expresso.setNome("Expresso Tradicional");
+        expresso.setPreco(6.50);
+        expresso.setAguaNecessaria(50);
+        expresso.setGraosNecessarios(10);
+        salvar(expresso);
+
+        Cafe cappuccino = new Cafe();
+        cappuccino.setNome("Cappuccino Cremoso");
+        cappuccino.setPreco(9.90);
+        cappuccino.setAguaNecessaria(100);
+        cappuccino.setGraosNecessarios(15);
+        salvar(cappuccino);
+
+        Cafe latte = new Cafe();
+        latte.setNome("Latte Macchiato");
+        latte.setPreco(11.50);
+        latte.setAguaNecessaria(150);
+        latte.setGraosNecessarios(12);
+        salvar(latte);
+    }
+
+    public List<Cafe> listarTodos() {
+        String sql = "SELECT * FROM cafes";
+        List<Cafe> listaCafes = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Cafe cafe = new Cafe();
+                cafe.setId(rs.getInt("id"));
+                cafe.setNome(rs.getString("nome_cafe"));
+                cafe.setPreco(rs.getDouble("preco"));
+                cafe.setAguaNecessaria(rs.getInt("agua_necessaria_ml"));
+                cafe.setGraosNecessarios(rs.getInt("graos_necessarios_g"));
+                listaCafes.add(cafe);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao listar cafés: " + e.getMessage());
+        }
+
+        // Se o banco estiver vazio, insere os cafés e busca novamente
+        if (listaCafes.isEmpty()) {
+            popularDadosIniciais();
+            return buscarTodosSemPopular();
+        }
+
+        return listaCafes;
+    }
+
+    private List<Cafe> buscarTodosSemPopular() {
+        String sql = "SELECT * FROM cafes";
+        List<Cafe> listaCafes = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Cafe cafe = new Cafe();
+                cafe.setId(rs.getInt("id"));
+                cafe.setNome(rs.getString("nome_cafe"));
+                cafe.setPreco(rs.getDouble("preco"));
+                cafe.setAguaNecessaria(rs.getInt("agua_necessaria_ml"));
+                cafe.setGraosNecessarios(rs.getInt("graos_necessarios_g"));
+                listaCafes.add(cafe);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erro ao relistar cafés: " + e.getMessage());
+        }
+
+        return listaCafes;
+    }
+
     public void salvar(Cafe cafe) {
         String sql = "INSERT INTO cafes (nome_cafe, preco, agua_necessaria_ml, graos_necessarios_g) VALUES (?, ?, ?, ?)";
 
@@ -38,34 +115,6 @@ public class CafeDAO {
         }
     }
 
-    // 2. LISTAR TODOS OS CAFÉS
-    public List<Cafe> listarTodos() {
-        String sql = "SELECT * FROM cafes";
-        List<Cafe> listaCafes = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                Cafe cafe = new Cafe();
-                cafe.setId(rs.getInt("id"));
-                cafe.setNome(rs.getString("nome_cafe"));
-                cafe.setPreco(rs.getDouble("preco"));
-                cafe.setAguaNecessaria(rs.getInt("agua_necessaria_ml"));
-                cafe.setGraosNecessarios(rs.getInt("graos_necessarios_g"));
-
-                listaCafes.add(cafe);
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Erro ao listar cafés: " + e.getMessage());
-        }
-
-        return listaCafes;
-    }
-
-    // 3. BUSCAR CAFÉ POR ID
     public Cafe buscarPorId(int id) {
         String sql = "SELECT * FROM cafes WHERE id = ?";
         Cafe cafe = null;
@@ -92,7 +141,6 @@ public class CafeDAO {
         return cafe;
     }
 
-    // 4. ATUALIZAR CAFÉ
     public void atualizar(Cafe cafe) {
         String sql = "UPDATE cafes SET nome_cafe = ?, preco = ?, agua_necessaria_ml = ?, graos_necessarios_g = ? WHERE id = ?";
 
@@ -106,14 +154,12 @@ public class CafeDAO {
             stmt.setInt(5, cafe.getId());
 
             stmt.executeUpdate();
-            System.out.println("Café atualizado com sucesso!");
 
         } catch (SQLException e) {
             System.err.println("Erro ao atualizar café: " + e.getMessage());
         }
     }
 
-    // 5. DELETAR CAFÉ
     public void deletar(int id) {
         String sql = "DELETE FROM cafes WHERE id = ?";
 
@@ -122,7 +168,6 @@ public class CafeDAO {
 
             stmt.setInt(1, id);
             stmt.executeUpdate();
-            System.out.println("Café removido com sucesso!");
 
         } catch (SQLException e) {
             System.err.println("Erro ao deletar café: " + e.getMessage());

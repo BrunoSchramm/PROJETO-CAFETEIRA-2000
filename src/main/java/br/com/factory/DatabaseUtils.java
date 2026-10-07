@@ -1,65 +1,54 @@
 package br.com.factory;
 
-import java.io.FileReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import org.h2.tools.RunScript;
 
 public class DatabaseUtils {
 
-    /**
-     * Inicializa a estrutura do banco de dados H2 executando o script SQL.
-     * Cria as tabelas automaticamente se elas ainda não existirem no projeto.
-     */
     public static void inicializarBanco() {
-        try (Connection conn = ConnectionFactory.getConnection()) {
-            Reader reader = null;
+        String sqlCafes = "CREATE TABLE IF NOT EXISTS cafes (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "nome_cafe VARCHAR(255) NOT NULL, " +
+                "preco DOUBLE NOT NULL, " +
+                "agua_necessaria_ml INT NOT NULL, " +
+                "graos_necessarios_g INT NOT NULL" +
+                ");";
 
-            // Tenta carregar o arquivo .sql do classpath ou da raiz do projeto
-            InputStream is = DatabaseUtils.class.getClassLoader().getResourceAsStream("projeto-cafeteira-2000.sql");
-            if (is != null) {
-                reader = new InputStreamReader(is);
-            } else {
-                reader = new FileReader("projeto-cafeteira-2000.sql");
-            }
+        String sqlCafeteira = "CREATE TABLE IF NOT EXISTS cafeteira (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                "nivel_agua_ml INT NOT NULL, " +
+                "nivel_graos_g INT NOT NULL" +
+                ");";
 
-            // Executa o script SQL para criar as tabelas
-            RunScript.execute(conn, reader);
-            System.out.println("--- Banco de dados e tabelas prontos para uso! ---\n");
+        // Insere a cafeteira com ID 1 se ela ainda não existir
+        String sqlPopulaCafeteira = "MERGE INTO cafeteira (id, nivel_agua_ml, nivel_graos_g) " +
+                "KEY(id) VALUES (1, 1000, 500);";
 
-        } catch (Exception e) {
+        try (Connection conn = ConnectionFactory.getConnection();
+             Statement stmt = conn.createStatement()) {
+
+            stmt.execute(sqlCafes);
+            stmt.execute(sqlCafeteira);
+            stmt.execute(sqlPopulaCafeteira);
+            System.out.println("Tabelas 'cafes' e 'cafeteira' inicializadas com sucesso!");
+
+        } catch (SQLException e) {
             System.err.println("Erro ao inicializar o banco de dados: " + e.getMessage());
         }
     }
 
-    /**
-     * Limpa os dados de todas as tabelas mantendo a estrutura original intacta.
-     */
     public static void limparTabelas() {
+        String sql = "DROP TABLE IF EXISTS cafes; DROP TABLE IF EXISTS cafeteira;";
+
         try (Connection conn = ConnectionFactory.getConnection();
              Statement stmt = conn.createStatement()) {
 
-            // Desativa a checagem de chave estrangeira no H2
-            stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
-
-            // Apaga todos os registros e reseta os IDs
-            stmt.execute("TRUNCATE TABLE pedidos");
-            stmt.execute("TRUNCATE TABLE comprador");
-            stmt.execute("TRUNCATE TABLE cafes");
-            stmt.execute("TRUNCATE TABLE cafeteira");
-            stmt.execute("TRUNCATE TABLE donoDeMaquina");
-
-            // Reativa a checagem de chave estrangeira
-            stmt.execute("SET REFERENTIAL_INTEGRITY TRUE");
-
-            System.out.println("--- Banco de dados limpo com sucesso! ---\n");
+            stmt.execute(sql);
+            System.out.println("Tabelas removidas com sucesso!");
 
         } catch (SQLException e) {
-            System.err.println("Erro ao limpar banco de dados: " + e.getMessage());
+            System.err.println("Erro ao limpar tabelas: " + e.getMessage());
         }
     }
 }
